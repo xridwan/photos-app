@@ -29,6 +29,7 @@ class DetailActivity : AppCompatActivity() {
             placeholder(android.R.color.darker_gray)
             error(R.drawable.nodata)
         }
+
         binding.tvDetailName.text = getString(R.string.name, name)
     }
 }

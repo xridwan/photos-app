@@ -5,65 +5,43 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.awesomeapp.model.Photo
-import com.example.awesomeapp.network.RetrofitInstance
+import com.example.awesomeapp.network.ApiConfig
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
 class MainViewModel : ViewModel() {
 
-    private val loading = MutableLiveData<Boolean>()
-    private val status = MutableLiveData<Int>()
-    private val message = MutableLiveData<String>()
+    private val _loading = MutableLiveData<Boolean>()
+    private val _status = MutableLiveData<Int>()
+    private val _message = MutableLiveData<String>()
 
-//    fun getImage(page: Int): LiveData<ArrayList<Photo>> {
-//        val image = MutableLiveData<ArrayList<Photo>>()
-//        loading.postValue(true)
-//        RetrofitInstance.getRetrofit().getData(page).enqueue(object : Callback<Response> {
-//            override fun onResponse(call: Call<Response>, response: retrofit2.Response<Response>) {
-//                loading.postValue(false)
-//                if (response.isSuccessful) {
-//                    val data = response.body()?.photos
-//                    image.postValue(data)
-//                } else {
-//                    status.postValue(response.code())
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<Response>, t: Throwable) {
-//                loading.postValue(false)
-//                message.postValue(t.localizedMessage)
-//            }
-//        })
-//        return image
-//    }
+    val loading: LiveData<Boolean> = _loading
+    val status: LiveData<Int> = _status
+    val message: LiveData<String> = _message
 
     fun getImage(page: Int): LiveData<ArrayList<Photo>> {
         val image = MutableLiveData<ArrayList<Photo>>()
-        loading.value = true
-        viewModelScope.launch {
+        _loading.value = true
+        viewModelScope.launch(Dispatchers.Main) {
             try {
-                val data = RetrofitInstance.getRetrofit().getData(page)
+                val data = ApiConfig.getRetrofit().getData(page)
                 if (data.isSuccessful) {
                     image.value = data.body()?.photos
                 } else {
-                    status.value = data.code()
+                    _status.value = data.code()
                 }
-                loading.value = false
+                _loading.value = false
             } catch (t: Throwable) {
                 when (t) {
-                    is IOException -> message.value = t.message.toString()
-                    is HttpException -> message.value = t.message.toString()
-                    else -> message.value = "Unknown error"
+                    is IOException -> _message.value = "Network Error"
+                    is HttpException -> _message.value = t.message().toString()
+                    else -> _message.value = "Unknown error"
                 }
-                loading.value = false
+                _loading.value = false
             }
         }
         return image
     }
-
-
-    fun getLoading(): LiveData<Boolean> = loading
-    fun getStatus(): LiveData<Int> = status
-    fun getMessage(): LiveData<String> = message
 }

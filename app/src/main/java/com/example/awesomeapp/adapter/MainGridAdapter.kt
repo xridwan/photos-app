@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.awesomeapp.R
 import com.example.awesomeapp.databinding.LayoutItemGridBinding
+import com.example.awesomeapp.helper.AdapterDiffCallback
 import com.example.awesomeapp.model.Photo
 
 class MainGridAdapter(
@@ -15,10 +17,12 @@ class MainGridAdapter(
     private var onItemClickCallback: OnItemClickCallback,
 ) : RecyclerView.Adapter<MainGridAdapter.ViewHolder>() {
 
-    @SuppressLint("NotifyDataSetChanged")
     fun setData(photos: MutableList<Photo>) {
-        this.photos = photos
-        notifyDataSetChanged()
+        val diffCallback = AdapterDiffCallback(this.photos, photos)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        this.photos.clear()
+        this.photos.addAll(photos)
+        diffResult.dispatchUpdatesTo(this)
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

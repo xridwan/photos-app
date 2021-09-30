@@ -1,6 +1,5 @@
 package com.example.awesomeapp.ui
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -16,7 +15,6 @@ import com.example.awesomeapp.databinding.ActivityMainBinding
 import com.example.awesomeapp.model.Photo
 import com.example.awesomeapp.viewmodel.MainViewModel
 
-@SuppressLint("NotifyDataSetChanged")
 class MainActivity : AppCompatActivity(), MainAdapter.OnItemClickCallback,
     MainGridAdapter.OnItemClickCallback {
 
@@ -69,17 +67,17 @@ class MainActivity : AppCompatActivity(), MainAdapter.OnItemClickCallback,
     }
 
     private fun getLoading() {
-        viewModel.getLoading().observe(this, {
+        viewModel.loading.observe(this, {
             loading = it
             if (loading) binding.progressCircular.visibility = View.VISIBLE
             else binding.progressCircular.visibility = View.GONE
         })
 
-        viewModel.getStatus().observe(this, {
+        viewModel.status.observe(this, {
             if (it >= 400) binding.lineNodata.visibility = View.GONE
         })
 
-        viewModel.getMessage().observe(this, {
+        viewModel.message.observe(this, {
             if (!it.isNullOrEmpty()) binding.lineNodata.visibility = View.VISIBLE
             else binding.lineNodata.visibility = View.GONE
         })
