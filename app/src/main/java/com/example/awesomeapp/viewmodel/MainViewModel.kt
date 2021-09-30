@@ -27,11 +27,8 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 val data = ApiConfig.getRetrofit().getData(page)
-                if (data.isSuccessful) {
-                    image.value = data.body()?.photos
-                } else {
-                    _status.value = data.code()
-                }
+                if (data.isSuccessful) image.value = data.body()?.photos
+                else _status.value = data.code()
                 _loading.value = false
             } catch (t: Throwable) {
                 when (t) {
