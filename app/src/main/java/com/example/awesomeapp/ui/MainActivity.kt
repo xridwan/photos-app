@@ -127,13 +127,6 @@ class MainActivity : AppCompatActivity(), MainAdapter.OnItemClickCallback {
         binding.rvImage.adapter = mainGridAdapter
     }
 
-    private fun setBlankPage() {
-        if (isEmpty) binding.lineNodata.visibility = View.VISIBLE
-        else binding.lineNodata.visibility = View.GONE
-
-        if (!isEmpty) binding.rvImage.visibility = View.VISIBLE
-    }
-
     override fun onItemClick(data: Photo) {
         startActivity(
             Intent(this, DetailActivity::class.java)
