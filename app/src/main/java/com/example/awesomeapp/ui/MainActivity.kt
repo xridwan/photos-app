@@ -12,12 +12,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.awesomeapp.adapter.MainAdapter
 import com.example.awesomeapp.adapter.MainGridAdapter
-import com.example.awesomeapp.viewmodel.MainViewModel
-import com.example.awesomeapp.model.Photo
 import com.example.awesomeapp.databinding.ActivityMainBinding
+import com.example.awesomeapp.model.Photo
+import com.example.awesomeapp.viewmodel.MainViewModel
 
 @SuppressLint("NotifyDataSetChanged")
-class MainActivity : AppCompatActivity(), MainAdapter.OnItemClickCallback {
+class MainActivity : AppCompatActivity(), MainAdapter.OnItemClickCallback,
+    MainGridAdapter.OnItemClickCallback {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
@@ -122,12 +123,20 @@ class MainActivity : AppCompatActivity(), MainAdapter.OnItemClickCallback {
         binding.rvImage.layoutManager = LinearLayoutManager(this)
         binding.rvImage.adapter = mainAdapter
 
-        mainGridAdapter = MainGridAdapter(ArrayList())
+        mainGridAdapter = MainGridAdapter(ArrayList(), this)
         binding.rvImage.layoutManager = GridLayoutManager(this, 2)
         binding.rvImage.adapter = mainGridAdapter
     }
 
     override fun onItemClick(data: Photo) {
+        startActivity(
+            Intent(this, DetailActivity::class.java)
+                .putExtra(DetailActivity.NAME, data.photographer)
+                .putExtra(DetailActivity.PHOTO, data.src.original)
+        )
+    }
+
+    override fun onItemClicked(data: Photo) {
         startActivity(
             Intent(this, DetailActivity::class.java)
                 .putExtra(DetailActivity.NAME, data.photographer)

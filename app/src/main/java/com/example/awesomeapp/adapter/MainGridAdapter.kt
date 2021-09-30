@@ -6,12 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.example.awesomeapp.model.Photo
 import com.example.awesomeapp.R
 import com.example.awesomeapp.databinding.LayoutItemGridBinding
+import com.example.awesomeapp.model.Photo
 
 class MainGridAdapter(
     private var photos: MutableList<Photo>,
+    private var onItemClickCallback: OnItemClickCallback,
 ) : RecyclerView.Adapter<MainGridAdapter.ViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
@@ -20,7 +21,7 @@ class MainGridAdapter(
         notifyDataSetChanged()
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = LayoutItemGridBinding.bind(itemView)
         fun bind(data: Photo) {
             with(binding) {
@@ -29,6 +30,10 @@ class MainGridAdapter(
                     crossfade(1000)
                     placeholder(android.R.color.darker_gray)
                     error(R.drawable.nodata)
+                }
+
+                itemView.setOnClickListener {
+                    onItemClickCallback.onItemClicked(data)
                 }
             }
         }
@@ -45,4 +50,8 @@ class MainGridAdapter(
     }
 
     override fun getItemCount(): Int = photos.size
+
+    interface OnItemClickCallback {
+        fun onItemClicked(data: Photo)
+    }
 }
